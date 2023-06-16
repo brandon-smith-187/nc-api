@@ -1,31 +1,45 @@
 import requests
 import xml.etree.ElementTree as ET
 import pandas as pd
+from enum import Enum
+
 
 # Choose categories from:
-# "asset.device" Device.
-# "asset.device.ncentralassettag" Device N-central asset tag.
-# "asset.os" OS.
-# "asset.computersystem" Computer System.
-# "asset.processor" Processor.
-# "asset.motherboard" Motherboard.
-# "asset.raidcontroller" Raid Controller.
-# "asset.memory" Memory.
-# "asset.videocontroller" Video Controller.
-# "asset.logicaldevice" Logical Device.
-# "asset.physicaldrive" Physical Drive.
-# "asset.mappeddrive" Mapped Drive.
-# "asset.mediaaccessdevice" Media Access Device.
-# "asset.networkadapter" Network Adapter.
-# "asset.usbdevice" USB Device.
-# "asset.printer" Printer.
-# "asset.port" Port.
-# "asset.service" Service.
-# "asset.application" Application.
-# "asset.patch" Patch.
-# "asset.customer" Customer.
-# "asset.socustomer" Service Organization.
-categories = ['asset.networkadapter', 'asset.device']
+class Options(Enum):
+    device = "asset.device"
+    asset_tag = "asset.device.ncentralassettag"
+    asset_os = "asset.os"
+    computer_system = "asset.computersystem"
+    processor = "asset.processor"
+    motherboard = "asset.motherboard"
+    raid_controller = "asset.raidcontroller"
+    memory = "asset.memory"
+    video_controller = "asset.videocontroller"
+    logical_device = "asset.logicaldevice"
+    physical_drive = "asset.physicaldrive"
+    mapped_drive = "asset.mappeddrive"
+    media_access_device = "asset.mediaaccessdevice"
+    network_adapter = "asset.networkadapter"
+    usb_device = "asset.usbdevice"
+    printer = "asset.printer"
+    port = "asset.port"
+    service = "asset.service"
+    application = "asset.application"
+    patch = "asset.patch"
+    customer = "asset.customer"
+    so_customer = "asset.socustomer"
+
+    def __init__(self, include_category):
+        self.include_category = include_category
+
+    def __str__(self):
+        return f"{self.include_category}"
+
+    def __repr__(self):
+        return f"{self.include_category}"
+
+
+categories = [Options.network_adapter, Options.device]
 
 # add your username
 username = 'YOUR USERNAME'
