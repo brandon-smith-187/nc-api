@@ -1,6 +1,4 @@
 import requests
-import xml.etree.ElementTree as ET
-import pandas as pd
 
 
 def set_customer_details(
@@ -70,7 +68,7 @@ def set_customer_details(
     settings_string = ''
     for setting, setting_value in settings.items():
         if setting_value:
-            settings_string += f'<ei2:key>{setting}</ei2:key>\n<ei2:value>{setting_value}</ei2:value>\n'
+            settings_string += f'<ei2:settings>\n<ei2:key>{setting}</ei2:key>\n<ei2:value>{setting_value}</ei2:value>\n</ei2:settings>\n'
 
     return settings_string
 
@@ -83,8 +81,7 @@ def create_body(user, password, settings_string):
 <ei2:customerAdd>
 <ei2:username>{user}</ei2:username>
 <ei2:password>{password}</ei2:password>
-<ei2:settings>
-{settings_string}</ei2:settings>
+{settings_string}
 </ei2:customerAdd>
 </soap:Body>
 </soap:Envelope>
@@ -102,7 +99,7 @@ if __name__ == '__main__':
     nc_uri = 'YOUR SERVER FQDN'
     headers = {'content-type': 'text/xml'}
 
-    customer_details = set_customer_details("Luke's Locks", 50)
+    customer_details = set_customer_details('New Customer', '50')
     body = create_body(username, jwt, customer_details)
     response = requests.post(url=f'{nc_uri}/dms2/services2/ServerEI2', headers=headers, data=body)
     xml_response = response.content
