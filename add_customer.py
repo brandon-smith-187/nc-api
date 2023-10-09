@@ -75,22 +75,20 @@ def set_customer_details(
     return settings_string
 
 
-def create_body(data_source, user, password, settings_string):
+def create_body(user, password, settings_string):
     return f"""
-    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ei2="http://ei2.nobj.nable.com/">
-    <soap:Header/>
-    <soap:Body>
-    <ei2:customerAdd>
-    <ei2:version>{data_source}</ei2:version>
-    <ei2:username>{user}</ei2:username>
-    <ei2:password>{password}</ei2:password>
-    <ei2:settings>
-    {settings_string}
-    </ei2:settings>
-    </ei2:customerAdd>
-    </soap:Body>
-    </soap:Envelope>
-    """
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ei2="http://ei2.nobj.nable.com/">
+<soap:Header/>
+<soap:Body>
+<ei2:customerAdd>
+<ei2:username>{user}</ei2:username>
+<ei2:password>{password}</ei2:password>
+<ei2:settings>
+{settings_string}</ei2:settings>
+</ei2:customerAdd>
+</soap:Body>
+</soap:Envelope>
+"""
 
 
 if __name__ == '__main__':
@@ -103,27 +101,9 @@ if __name__ == '__main__':
     # add the uri for your N-central server
     nc_uri = 'YOUR SERVER FQDN'
     headers = {'content-type': 'text/xml'}
-    # 0.0 for N-central as the source
-    version = '0.0'
 
     customer_details = set_customer_details("Luke's Locks", 50)
-    body = create_body(version, username, jwt, customer_details)
+    body = create_body(username, jwt, customer_details)
     response = requests.post(url=f'{nc_uri}/dms2/services2/ServerEI2', headers=headers, data=body)
     xml_response = response.content
-    xml_response = ET.ElementTree(ET.fromstring(xml_response))
-    root = xml_response.getroot()
-    tree = root.findall('.//{http://ei2.nobj.nable.com/}return')
-
-    device_list = []
-    for device in tree:
-        device_info = {}
-        for attribute in device:
-            key = attribute.find('{http://ei2.nobj.nable.com/}key')
-            value = attribute.find('{http://ei2.nobj.nable.com/}value')
-            if value is not None:
-                device_info[key.text] = value.text
-        device_list.append(device_info)
-
-    df = pd.DataFrame(device_list)
-
-    df.to_csv('device_list.csv', index=False)
+    print(xml_response)
